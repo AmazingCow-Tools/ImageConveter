@@ -40,6 +40,7 @@
 ##                                  Enjoy :)                                  ##
 ##----------------------------------------------------------------------------##
 
+#COWTODO: Add coloring - cowtermcolor.
 
 ## Imports ##
 import os;
