@@ -1,2 +1,40 @@
+================================================================================
+| Version 0.2.x                                                                |
+================================================================================
+[v0.2.0] April 16, 2016
+-- General --
+    - Starting using cowtermcolor for coloring.
+    - Update the behaviour of --force.
+    - Write the README.
+
+-- Source --
+    imgconv.py
+        - Sort the imports.
+        - Add a function to show users that are missing packages.
+        - Add the cowtermcolor package.
+        - Change the Globals.output_ext to output_format to better
+          reflect the variable purpose.
+        - Sort the Constants Flags.
+        - Add some short | long a new flags.
+        - Update the version number.
+        - Add the coloring stuff.
+        - Add the help screen.
+        - Add print_error function to print non fatal error in no verbose.
+        - Update the signatures of print help and version.
+        - Rewrite some output messages to better clarity.
+        - Change from the os.system(mkdir ...) to a better os.makesdirs
+          with exception handling and all stuff.
+        - Change the --force behavior - Now it will convert anyway.
+        - Change the flags parsing - Cleaner code.
+        - Fix the typo in license header.
+
+-- Info Files --
+    README.md
+        - Write the README.
+
+
+================================================================================
+| Version 0.1.x                                                                |
+================================================================================
 [v0.1.0] April 1, 2016
     Finish the basic implementation.
