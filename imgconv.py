@@ -109,6 +109,9 @@ class Constants:
     FLAG_NO_COLORS      = "n", "no-colors"
 
     ALL_FLAGS_SHORT = "".join([
+        FLAG_HELP          [0],
+        FLAG_VERSION       [0],
+        FLAG_DISPLAY_EXT   [0],
         FLAG_VERBOSE       [0],
         FLAG_FORCE         [0],
         FLAG_OUTPUT_PATH   [0] + ":",
@@ -116,6 +119,9 @@ class Constants:
         FLAG_NO_COLORS     [0],
     ]);
     ALL_FLAGS_LONG = [
+        FLAG_HELP          [1],
+        FLAG_VERSION       [1],
+        FLAG_DISPLAY_EXT   [1],
         FLAG_VERBOSE       [1],
         FLAG_FORCE         [1],
         FLAG_OUTPUT_PATH   [1] + "=",
