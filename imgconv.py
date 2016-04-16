@@ -40,16 +40,43 @@
 ##                                  Enjoy :)                                  ##
 ##----------------------------------------------------------------------------##
 
-#COWTODO: Add coloring - cowtermcolor.
-
 ## Imports ##
-import os;
-import os.path;
-import sys;
 import getopt;
-import pygame.image;
-
+import os.path;
+import os;
+import sys;
 import pdb;
+
+
+################################################################################
+## Don't let the standard import error to users - Instead show a              ##
+## 'nice' error screen describing the error and how to fix it.                ##
+################################################################################
+def __import_error_message_print(pkg_name, pkg_url):
+    print "Sorry, "
+    print "imgconv depends on {} package.".format(pkg_name);
+    print "Visit {} to get it.".format(pkg_url);
+    print "Or checkout the README.md to learn other ways to install {}.".format(pkg_name);
+    exit(1);
+
+
+## cowtermcolor ##
+try:
+    from cowtermcolor import *;
+except ImportError, e:
+    __import_error_message_print(
+        "cowtermcolor",
+        "http//opensource.amazingcow.com/cowtermcolor.html");
+
+## pygame ##
+try:
+    import pygame;
+except ImportError, e:
+    __import_error_message_print(
+        "pygame",
+        "http//www.pygame.org");
+
+
 
 ################################################################################
 ## Globals                                                                    ##
@@ -60,36 +87,43 @@ class Globals:
     start_path  = ".";
     output_path = "./imgconv_output";
 
-    output_ext  = "png";
+    output_format  = "png";
 
     force_conversion = False;
+
 
 ################################################################################
 ## Constants                                                                  ##
 ################################################################################
 class Constants:
-    ##Flags
+    ## Flags ##
+    #Exclusives
     FLAG_HELP        = "h", "help";
     FLAG_VERSION     = "v", "version";
     FLAG_DISPLAY_EXT = "L", "list-formats";
+    #Optionals
+    FLAG_VERBOSE        = "V", "verbose";
+    FLAG_FORCE          = "F", "force";
+    FLAG_OUTPUT_PATH    = "o", "output";
+    FLAG_OUTPUT_FORMAT  = "f", "format";
+    FLAG_NO_COLORS      = "n", "no-colors"
 
-    FLAG_VERBOSE     = "V", "verbose";
+    ALL_FLAGS_SHORT = "".join([
+        FLAG_VERBOSE       [0],
+        FLAG_FORCE         [0],
+        FLAG_OUTPUT_PATH   [0] + ":",
+        FLAG_OUTPUT_FORMAT [0] + ":",
+        FLAG_NO_COLORS     [0],
+    ]);
+    ALL_FLAGS_LONG = [
+        FLAG_VERBOSE       [1],
+        FLAG_FORCE         [1],
+        FLAG_OUTPUT_PATH   [1] + "=",
+        FLAG_OUTPUT_FORMAT [1] + "=",
+        FLAG_NO_COLORS     [1],
+    ];
 
-    FLAG_OUTPUT_PATH = "o", "output";
-    FLAG_OUTPUT_EXT  = "f", "format";
-
-    FLAG_FORCE       = "force";
-
-
-    ALL_FLAGS_SHORT = "hvLVo:f:";
-    ALL_FLAGS_LONG  = ["help",
-                       "version",
-                       "list-formats",
-                       "verbose",
-                       "output=",
-                       "format=",
-                       "force"];
-
+    ## Formats ##
     SUPPORTED_FORMATS      = ["bmp", "tga", "png", "jpg", "jpeg"];
     SUPPORTED_FORMATS_BMP  = SUPPORTED_FORMATS[0];
     SUPPORTED_FORMATS_TGA  = SUPPORTED_FORMATS[1];
@@ -97,13 +131,27 @@ class Constants:
     SUPPORTED_FORMATS_JPG  = SUPPORTED_FORMATS[3];
     SUPPORTED_FORMATS_JPEG = SUPPORTED_FORMATS[4];
 
-    #App
+    # App ##
     APP_NAME      = "imgconv";
-    APP_VERSION   = "0.1.0";
+    APP_VERSION   = "0.2.0";
     APP_AUTHOR    = "N2OMatt <n2omatt@amazingcow.com>"
     APP_COPYRIGHT = "\n".join(("Copyright (c) 2016 - Amazing Cow",
                                "This is a free software (GPLv3) - Share/Hack it",
                                "Check opensource.amazingcow.com for more :)"));
+
+
+
+################################################################################
+## Colors Suff                                                                ##
+################################################################################
+ColorError      = Color(RED);
+ColorWarning    = Color(YELLOW);
+ColorOK         = Color(GREEN);
+ColorPath       = Color(MAGENTA);
+ColorInfo       = Color(BLUE);
+ColorProcessing = Color(YELLOW);
+
+
 
 ################################################################################
 ## Print Functions                                                            ##
@@ -112,29 +160,62 @@ def print_verbose(msg):
     if(Globals.verbose):
         print msg;
 
+
 def print_fatal(msg):
-    print "[FATAL]", msg;
+    print ColorError("[FATAL]"), msg;
     exit(1);
 
+def print_error(msg):
+    print ColorError("[ERROR]"), msg;
 
-def print_help():
-    msg = "Usage:" + """
-  """;
+def print_help(exit_code = -1):
+    msg = """Usage:
+  imgconv -h | -v | -l
+  imgconv [-V] [-F] [-o <path>] [-f <format>] [-n] start-path
+
+Options:
+ *-h --help          : Show this screen
+ *-v --version       : Show app version and copyright.
+ *-L --list-formats  : Show the supported output formats.
+
+  -V --verbose          : Verbose mode, helps to see what it's doing.
+  -F --force            : Force the conversion even if it's not need.
+  -o --output <path>    : Directory that converted images will be placed.
+  -f --format <format>  : Format of converted images (See --list-formats).
+
+  -n --no-color : Print the output without colors.
+
+Notes:
+  If <start-path> is blank the current dir is assumed.
+  If --output <path> is not specified the ./imgconv_output will be assumed.
+  If --format <format> is not specified the [png] format will be assumed.
+
+  Options marked with * are exclusive, i.e. the imgconv will run that
+  and exit after the operation.
+"""
     print msg;
 
-def print_version():
+    if(exit_code != -1):
+        exit(exit_code);
+
+
+def print_version(exit_code = -1):
     print "{} - {} - {}".format(Constants.APP_NAME,
                                 Constants.APP_VERSION,
                                 Constants.APP_AUTHOR);
     print Constants.APP_COPYRIGHT;
     print;
 
+    if(exit_code != -1):
+        exit(exit_code);
+
+
 def print_formats():
     print "{} - {} - {}".format(Constants.APP_NAME,
                                 Constants.APP_VERSION,
                                 "AmazingCow");
 
-    print "Output formarts supported: ";
+    print "Output formats supported: ";
     print "   " + " - ".join(Constants.SUPPORTED_FORMATS);
 
 
@@ -143,7 +224,7 @@ def print_run_info():
     print_verbose("  verbose     : " + str(Globals.verbose));
     print_verbose("  start_path  : " + str(Globals.start_path));
     print_verbose("  output_path : " + str(Globals.output_path));
-    print_verbose("  format      : " + str(Globals.output_ext));
+    print_verbose("  format      : " + str(Globals.output_format));
     print_verbose("  force       : " + str(Globals.force_conversion));
     print_verbose("");
 
@@ -152,8 +233,8 @@ def print_run_info():
 ## Run                                                                        ##
 ################################################################################
 def run():
+    #COWTODO: Check if start_path is valid.
     filenames = os.listdir(Globals.start_path);
-    # pdb.set_trace();
 
     for filename in filenames:
         #Get the full filename of this file.
@@ -169,53 +250,85 @@ def run():
             surface = pygame.image.load(os.path.abspath(input_full_filename));
         #If we cannot load the image, just log and ignore...
         except Exception, e:
-            msg = "Skipping {} - {}".format(filename, str(e));
-            print_verbose(msg);
+            msg = "{} ({}) - {}".format(ColorError("Cannot load"),
+                                        ColorPath(filename),
+                                        str(e));
+            print_error(msg);
             continue;
+
 
         #Create the output folder;
         folder_path = os.path.abspath(os.path.expanduser(Globals.output_path));
-        os.system("mkdir -p {}".format(folder_path));
+        try:
+            os.makedirs(folder_path);
+        except OSError, e:
+            #Prevent the File Exists to be raised.
+            if(e.errno != os.errno.EEXIST):
+                e.filename = ColorPath(e.filename);
+                print_fatal("Errno {} - {} - {}".format(e.errno,
+                                                        e.strerror,
+                                                        ColorPath(e.filename)));
+        #Is Directory?
+        if(not os.path.isdir(folder_path)):
+            print_fatal("Output Dir Path is not a directory - ({})".format(
+                        ColorPath(folder_path)));
+        #Is Write enabled?
+        if(not os.access(folder_path, os.W_OK)):
+            print_fatal("Output Dir Path is not writable - ({})".format(
+                        ColorPath(folder_path)));
+
 
         #Get the name end extension...
         input_name, input_ext = os.path.splitext(filename);
         input_ext = input_ext.replace(".", "");
 
         #Already on same format, don't need do anything else.
-        if(input_ext == Globals.output_ext):
-            msg = "Skipping {} - Same format".format(filename);
+        #If --force is set DO NOT skip.
+        if(input_ext == Globals.output_format and not Globals.force_conversion):
+            msg = "{} ({}) - Same format".format(ColorInfo("Skipping:"),
+                                                 ColorPath(filename));
             print_verbose(msg);
             continue;
 
         #Build the output filename
-        output_filename      = input_name + "." + Globals.output_ext;
+        output_filename      = input_name + "." + Globals.output_format;
         output_full_filename = os.path.join(Globals.output_path, output_filename);
+        output_full_filename = os.path.abspath(os.path.expanduser(output_full_filename));
 
-
-        #Already have a file with the target filename - Just continue on --force
+        #Already have a file with the target filename
+        #If --force is set DO NOT skip.
         if(os.path.exists(output_full_filename) and not Globals.force_conversion):
-            msg = "Skipping {} - Output file already exists ({})".format(filename,
-                                                                         output_filename);
+            msg = "{} ({}) - {} ({})".format(ColorInfo("Skipping"),
+                                             ColorPath(filename),
+                                             "Output file already exists",
+                                             ColorPath(output_filename));
             print_verbose(msg);
             continue;
 
 
         #Log.
-        msg = "Coverting {} from ({}) to ({})".format(filename,
-                                                      input_ext,
-                                                      Globals.output_ext);
+        msg = "{} ({}) {} [{}] {} [{}]".format(ColorProcessing("Converting"),
+                                               ColorPath(filename),
+                                               ColorProcessing("from"),
+                                               ColorInfo(input_ext),
+                                               ColorProcessing("to"),
+                                               ColorInfo(Globals.output_format));
         print_verbose(msg);
+
 
         #Try to save the output image.
         try:
             pygame.image.save(surface, output_full_filename);
-            msg = "  Saved in {}".format(output_full_filename);
+            msg = "  {} ({})".format(ColorOK("Saved in"),
+                                     ColorPath(output_full_filename));
             print_verbose(msg);
+
         #Log if anything goes wrong...
         except Exception, e:
-            msg = "  Failed {}".format(output_full_filename);
-            print_verbose(msg);
-            print_verbose(str(e));
+            msg = "{} ({}) - {}".format(ColorError("Failed"),
+                                          ColorPath(output_full_filename),
+                                          str(e));
+            print_error(msg);
 
 
 
@@ -236,40 +349,33 @@ def main():
         key, value = option;
         key = key.lstrip("-");
 
-        #Help and Version Flags.
-        if(key in Constants.FLAG_HELP):
-            print_help();
-            exit(0);
-        if(key in Constants.FLAG_VERSION):
-            print_version();
-            exit(0);
-        if(key in Constants.FLAG_DISPLAY_EXT):
-            print_formats();
-            exit(0);
+        #Help / Version / List - EXCLUSIVE
+        if(key in Constants.FLAG_HELP        ): print_help   (0);
+        if(key in Constants.FLAG_VERSION     ): print_version(0);
+        if(key in Constants.FLAG_DISPLAY_EXT ): print_formats(0);
 
-        #Verbose Flag.
-        if(key in Constants.FLAG_VERBOSE):
-            Globals.verbose = True;
+        #Verbose / Force - OPTIONALS
+        if(key in Constants.FLAG_VERBOSE ): Globals.verbose = True;
+        if(key in Constants.FLAG_FORCE   ): Globals.force_conversion = True;
 
-        #Verbose Flag.
-        if(key == Constants.FLAG_FORCE):
-            Globals.force_conversion = True;
+        #Output Path / Output Format - OPTIONALS
+        if(key in Constants.FLAG_OUTPUT_PATH   ): Globals.output_path   = value;
+        if(key in Constants.FLAG_OUTPUT_FORMAT ): Globals.output_format = value;
 
-        #Output Path Flag.
-        if(key in Constants.FLAG_OUTPUT_PATH):
-            Globals.output_path = value;
-        #Output Ext Flag.
-        if(key in Constants.FLAG_OUTPUT_EXT):
-            Globals.output_ext = value;
+        #No Colors - OPTIONALS
+        if(key in Constants.FLAG_NO_COLORS):
+            ColorMode.mode = ColorMode.NEVER;
+
 
     #Check if Output format is valid.
-    if(Globals.output_ext is None):
-        Globals.output_ext = Constants.SUPPORTED_FORMATS_PNG;
+    if(Globals.output_format is None):
+        Globals.output_format = Constants.SUPPORTED_FORMATS_PNG;
 
-    Globals.output_ext = Globals.output_ext.lower();
-    if(Globals.output_ext not in Constants.SUPPORTED_FORMATS):
+    #Lower the case - So users can type anything (Png PNG, pNg ...).
+    Globals.output_format = Globals.output_format.lower();
+    if(Globals.output_format not in Constants.SUPPORTED_FORMATS):
         print_formats();
-        print_fatal("Invalid format: {}".format(Globals.output_ext));
+        print_fatal("Invalid format: {}".format(Globals.output_format));
         exit(1);
 
     #Get the start path.
