@@ -189,7 +189,7 @@ Options:
   -o --output <path>    : Directory that converted images will be placed.
   -f --format <format>  : Format of converted images (See --list-formats).
 
-  -n --no-color : Print the output without colors.
+  -n --no-colors : Print the output without colors.
 
 Notes:
   If <start-path> is blank the current dir is assumed.
