@@ -139,7 +139,7 @@ class Constants:
 
     # App ##
     APP_NAME      = "imgconv";
-    APP_VERSION   = "0.2.0";
+    APP_VERSION   = "0.2.1";
     APP_AUTHOR    = "N2OMatt <n2omatt@amazingcow.com>"
     APP_COPYRIGHT = "\n".join(("Copyright (c) 2016 - Amazing Cow",
                                "This is a free software (GPLv3) - Share/Hack it",
@@ -216,13 +216,16 @@ def print_version(exit_code = -1):
         exit(exit_code);
 
 
-def print_formats():
+def print_formats(exit_code = -1):
     print "{} - {} - {}".format(Constants.APP_NAME,
                                 Constants.APP_VERSION,
                                 "AmazingCow");
 
     print "Output formats supported: ";
     print "   " + " - ".join(Constants.SUPPORTED_FORMATS);
+
+    if(exit_code != -1):
+        exit(exit_code);
 
 
 def print_run_info():
