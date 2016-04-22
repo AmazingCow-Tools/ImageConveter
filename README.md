@@ -27,7 +27,7 @@ As usual, you are **very welcomed** to **share** and **hack** it.
 
 ## Usage:
 
-``` bash
+``` 
   imgconv -h | -v | -l
   imgconv [-V] [-F] [-o <path>] [-f <format>] [-n] start-path
 
@@ -80,26 +80,10 @@ Or to uninstall
 This project uses / depends on:
 
 * Amazing Cow's 
-[cowtermcolor](http://www.github.com/AmazingCow/AmazingCore-Libs/cowtermcolor_py)
+[cowtermcolor](http://www.github.com/AmazingCow-Libs/cowtermcolor_py)
 package to coloring the terminal.
 
 * [pygame](http://www.pygame.org) as a backend to image manipulations.
-
-On debian based systems you can just:
-
-``` bash
-  #To install cowtermcolor - Check its repo to other install options too.
-  $ wget http://opensource.amazingcow.com/cowtermcolor/dist/latest/install.sh | bash 
-
-  #To install pygame.
-  $ sudo apt-get install pygame;
-
-```
-
-<br>
-
-As convenience we add a ```get_deps.sh``` script to get the dependencies in 
-a debian based system. 
 
 
 
@@ -129,7 +113,7 @@ This software is released under GPLv3.
 Check the TODO file for general things.
 
 This projects uses the COWTODO tags.   
-So install [cowtodo](http://www.github.com/AmazingCow-Tools/COWTODO.html) and run:
+So install [cowtodo](http://www.github.com/AmazingCow-Tools/COWTODO) and run:
 
 ``` bash
 $ cd path/for/the/project
