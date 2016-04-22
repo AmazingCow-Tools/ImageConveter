@@ -1,6 +1,23 @@
 ================================================================================
 | Version 0.2.x                                                                |
 ================================================================================
+[v0.2.2] April 22, 2016
+-- General --
+    Fix the help screen.
+    Update the README.
+
+-- Source --
+    imgconv.py
+    - Update the version numbers.
+
+-- Info Files --
+    README.md
+    - Fix the wrong links.
+    - Fix the syntax coloring.
+    - Remove unneded content.
+
+
+--------------------------------------------------------------------------------
 [v0.2.1] April 18, 2016
 -- General --
     Fix the print_formats function.
